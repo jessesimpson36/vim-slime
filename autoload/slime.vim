@@ -72,9 +72,11 @@ function! s:TmuxCommand(config, args)
 endfunction
 
 function! s:TmuxSend(config, text)
-  call s:WritePasteFile(a:text)
-  call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
-  call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(a:config["target_pane"]))
+  for pane in split(a:config["target_pane"], ",")
+    call s:WritePasteFile(a:text)
+    call s:TmuxCommand(a:config, "load-buffer " . g:slime_paste_file)
+    call s:TmuxCommand(a:config, "paste-buffer -d -t " . shellescape(pane))
+  endfor
 endfunction
 
 function! s:TmuxPaneNames(A,L,P)
